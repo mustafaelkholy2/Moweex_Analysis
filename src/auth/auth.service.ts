@@ -1,30 +1,20 @@
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common"
-import { InjectRepository } from "@nestjs/typeorm"
-import { Repository } from "typeorm"
-import { User } from "../users/entities/user.entity"
-import * as bcrypt from 'bcryptjs'
-import * as jwt from 'jsonwebtoken'
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-    constructor(@InjectRepository(User) private repo: Repository<User>) { }
+    constructor(private jwtService: JwtService) { }
 
-    private generateToken(user: User) {
-        const payload = { email: user.email, id: user.id, isAdimn: user.isAdmin }
-        const secretKey = `user${user.id}`
+    async hashPassword(password: string): Promise<string> {
+        return bcrypt.hash(password, 10);
     }
 
-    async login(email: string, password: string) {
-        const user = await this.repo.findOne({ where: { email } })
-        if (!user) {
-            throw new NotFoundException('User not found')
-        }
-        const isMatchingPass = await bcrypt.compare(password, user.password)
+    async validatePassword(password: string, hash: string): Promise<boolean> {
+        return bcrypt.compare(password, hash);
+    }
 
-        if (!isMatchingPass) {
-            throw new UnauthorizedException('Invalid credentials')
-        }
-
-
+    generateToken(payload: { id: number, userName: string, role: string }, secretKey: string) {
+        return this.jwtService.sign(payload, { secret: secretKey });
     }
 }
