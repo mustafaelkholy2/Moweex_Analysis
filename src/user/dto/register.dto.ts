@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsString, Matches, MinLength } from "class-validator";
-import { UserRole } from "../role/role.enum";
+import { UserRole } from "../../roles/roles.enum";
 
 const passwordRegEx =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*d)(?=.*[@$!%*?&])[A-Za-zd@$!%*?&]{8,20}$/
@@ -7,7 +7,7 @@ const passwordRegEx =
 export class userRegisterDto {
     @IsNotEmpty()
     @IsString()
-    @MinLength(5, { message: 'Name must have atleast 5 characters.' })
+    @MinLength(5, { message: 'Name must have at least 5 characters.' })
     userName: string
 
     @IsNotEmpty()

@@ -6,7 +6,8 @@ import { AuthGuard } from './auth.guard';
 @Module({
   imports: [JwtModule.register({
     global: true,
-    secret: 'Secret_Key_Is_Used_To_Create_Token'
+    secret: 'Secret_Key_Is_Used_To_Create_Token',
+    signOptions: { expiresIn: '30m' }
   })],
   providers: [AuthService, AuthGuard],
   exports: [AuthService, AuthGuard]

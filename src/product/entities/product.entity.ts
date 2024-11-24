@@ -8,8 +8,8 @@ export class Product {
     @Column({ type: 'varchar', length: 30 })
     productName: string;
 
-    @Column()
-    price: number
+    @Column("float", { nullable: true })
+    price: number;
 
     @Column({ type: 'enum', enum: ['available', 'unavailable'], default: 'available' })
     role: 'available' | 'unavailable'

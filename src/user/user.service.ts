@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
@@ -30,7 +30,7 @@ export class UserService {
             throw new UnauthorizedException('Password is incorrect');
         }
         const secretKey = 'Secret_Key_Is_Used_To_Create_Token';
-        const payload = { id: user.id, userName: user.userName, role: user.role };
+        const payload = { id: user.id, userName: user.userName, role: user.role, email: user.email };
         return { token: this.authService.generateToken(payload, secretKey) };
     }
 
@@ -40,11 +40,40 @@ export class UserService {
             throw new NotFoundException(`User with email ${email} not found`);
         }
         if (attr.password) {
-            const hashPassword = await this.authService.hashPassword(attr.password);
-            Object.assign(user, { ...attr, password: hashPassword });
+            if (!(await this.authService.validatePassword(attr.password, user.password))) {
+                const hashPassword = await this.authService.hashPassword(attr.password);
+                Object.assign(user, { ...attr, password: hashPassword });
+            } else {
+                throw new NotFoundException(`This password is the same as the old password.`);
+            }
+
+
         } else {
             Object.assign(user, attr);
         }
         return this.repo.save(user);
+    }
+
+    async delete(reqUser: any, password: string) {
+        const { email } = reqUser;
+        console.log(password)
+        const user = await this.repo.findOne({ where: { email } });
+        if (!user) {
+            throw new NotFoundException(`User with email ${email} not found`);
+        }
+
+        if (!user.password) {
+            throw new InternalServerErrorException('User password is missing.');
+        }
+
+        if (!password || typeof password !== 'string') {
+            throw new BadRequestException('Password must be a valid string.');
+        }
+        const validatePassword = await this.authService.validatePassword(password, user.password);
+        if (!validatePassword) {
+            throw new UnauthorizedException('Password is incorrect');
+        }
+
+        return this.repo.remove(user)
     }
 }

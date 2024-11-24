@@ -14,7 +14,7 @@ export class AuthService {
         return bcrypt.compare(password, hash);
     }
 
-    generateToken(payload: { id: number, userName: string, role: string }, secretKey: string) {
+    generateToken(payload: { id: number, userName: string, role: string, email: string }, secretKey: string) {
         return this.jwtService.sign(payload, { secret: secretKey });
     }
 }
