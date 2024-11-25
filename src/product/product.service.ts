@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Equal, FindOptionsWhere, LessThanOrEqual, Like, MoreThanOrEqual, Repository } from 'typeorm';
 import { AddProduct } from './dto/add.dto';
-import { AuthService } from 'src/auth/auth.service';
+import { ClickhouseService } from './clickhouse.service';
 
 @Injectable()
 export class ProductService {
-    constructor(@InjectRepository(Product) private repo: Repository<Product>, private authService: AuthService) { }
+    constructor(@InjectRepository(Product) private repo: Repository<Product>, private clickhouseService: ClickhouseService) { }
 
     async addProduct(addProduct: AddProduct) {
         const product = await this.repo.findOne({ where: { productName: addProduct.productName } });
@@ -41,9 +41,10 @@ export class ProductService {
         return await this.repo.remove(product)
     }
 
-    async search(queries: Record<string, string>) {
+    async search(queries: Record<string, string>, user: any) {
         const conditions: any = {};
-
+        const now = new Date();
+        const search_date = now.toISOString().slice(0, 19).replace('T', ' ')
         Object.entries(queries).forEach(([key, value]) => {
             if (key === 'price') {
                 conditions[key] = LessThanOrEqual(parseFloat(value));
@@ -58,14 +59,24 @@ export class ProductService {
             where: conditions,
         });
 
-        console.log(conditions);
-
         if (products.length === 0) {
             throw new NotFoundException(`No products found matching your criteria`);
         }
 
+
+        //Add search data in clickhouse database
+        for (let i = 0; i < products.length; i++) {
+            const searchData = {
+                product_name: products[i].productName,
+                user_id: user.id,
+                user_email: user.email,
+                search_date: search_date
+            }
+            await this.clickhouseService.insertSearchLog(searchData)
+        }
+
+
         return products;
     }
-
 
 }

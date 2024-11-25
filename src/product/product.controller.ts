@@ -52,7 +52,7 @@ export class ProductController {
             throw new UnauthorizedException('At least one query parameter is required');
         }
 
-        return this.productService.search(queries)
+        return this.productService.search(queries, req.user)
     }
 }
 
