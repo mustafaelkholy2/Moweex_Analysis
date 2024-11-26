@@ -8,7 +8,7 @@ export class ClickhouseService {
     constructor() {
         this.client = createClient({
             host: 'http://localhost:8123',
-            database: 'products_analysis',
+            database: 'moweex_analysis',
             username: 'default',
             password: '',
         })
