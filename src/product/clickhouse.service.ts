@@ -10,7 +10,7 @@ export class ClickhouseService {
             host: 'http://localhost:8123',
             database: 'moweex_analysis',
             username: 'default',
-            password: '',
+            password: 'default',
         })
     }
 
