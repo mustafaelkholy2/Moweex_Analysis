@@ -10,6 +10,7 @@ export class ProductService {
     constructor(@InjectRepository(Product) private repo: Repository<Product>, private clickhouseService: ClickhouseService) { }
 
     async addProduct(addProduct: AddProduct) {
+        addProduct.productName = addProduct.productName.charAt(0).toUpperCase() + addProduct.productName.slice(1).toLowerCase()
         const product = await this.repo.findOne({ where: { productName: addProduct.productName } });
 
         if (product) {
@@ -42,15 +43,18 @@ export class ProductService {
     }
 
     async search(queries: Record<string, string>, user: any) {
-        const conditions: any = {};
+        const conditions: Record<string, any> = {};
         const now = new Date();
-        const search_date = now.toISOString().slice(0, 19).replace('T', ' ')
+        const search_date = now.toISOString().slice(0, 19).replace('T', ' '); // "yyyy-MM-dd HH:mm:ss"
+
+
         Object.entries(queries).forEach(([key, value]) => {
             if (key === 'price') {
                 conditions[key] = LessThanOrEqual(parseFloat(value));
             } else if (key === 'role') {
                 conditions[key] = Equal(value as 'available' | 'unavailable');
             } else {
+                value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
                 conditions[key] = Like(`%${value}%`);
             }
         });
@@ -60,21 +64,17 @@ export class ProductService {
         });
 
         if (products.length === 0) {
-            throw new NotFoundException(`No products found matching your criteria`);
+            throw new NotFoundException('No products found matching your criteria');
         }
 
+        const searchLogs = products.map(product => ({
+            product_name: product.productName,
+            user_id: user.id,
+            user_email: user.email,
+            search_date: search_date,
+        }));
 
-        //Add search data in clickhouse database
-        for (let i = 0; i < products.length; i++) {
-            const searchData = {
-                product_name: products[i].productName,
-                user_id: user.id,
-                user_email: user.email,
-                search_date: search_date
-            }
-            await this.clickhouseService.insertSearchLog(searchData)
-        }
-
+        await this.clickhouseService.insertSearchLog(searchLogs);
 
         return products;
     }

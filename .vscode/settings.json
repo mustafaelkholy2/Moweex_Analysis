@@ -8,6 +8,15 @@
             "name": "users_products",
             "database": "users_products",
             "username": "postgres"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "moweex_analysis",
+            "database": "moweex_analysis",
+            "username": "postgres"
         }
     ]
 }

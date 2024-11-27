@@ -7,7 +7,7 @@ export class ClickhouseService {
 
     constructor() {
         this.client = createClient({
-            host: 'http://localhost:8123',
+            host: 'http://localhost:8123/',
             database: 'moweex_analysis',
             username: 'default',
             password: 'default',
@@ -15,7 +15,6 @@ export class ClickhouseService {
     }
 
     async insertSearchLog(searchData: any) {
-        console.log(searchData)
         await this.client.insert({
             table: 'search_logs',
             values: [searchData],
