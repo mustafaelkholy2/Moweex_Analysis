@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import { userRegisterDto } from './dto/register.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { userUpdateDto } from './dto/update.dto';
-import passport from 'passport';
 
 @Controller('user')
 export class UserController {

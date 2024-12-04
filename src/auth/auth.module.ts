@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './auth.guard';
+import { JwtGlobalModule } from './jwt.module';
 
 @Module({
-  imports: [JwtModule.register({
-    global: true,
-    secret: 'Secret_Key_Is_Used_To_Create_Token',
-    signOptions: { expiresIn: '30m' }
-  })],
+  imports: [
+    JwtGlobalModule
+  ],
   providers: [AuthService, AuthGuard],
   exports: [AuthService, AuthGuard]
 })

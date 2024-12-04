@@ -1,9 +1,10 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) { }
+  constructor(private jwtService: JwtService, private configService: ConfigService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -14,7 +15,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const user = this.jwtService.verify(token, { secret: 'Secret_Key_Is_Used_To_Create_Token' });
+      const user = this.jwtService.verify(token, { secret: this.configService.get<string>('secretKey') });
       request.user = user;
       return true;
     } catch (error) {

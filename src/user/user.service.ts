@@ -4,10 +4,11 @@ import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
 import { userRegisterDto } from './dto/register.dto'
 import { AuthService } from "src/auth/auth.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(User) private repo: Repository<User>, private authService: AuthService) { }
+    constructor(@InjectRepository(User) private repo: Repository<User>, private authService: AuthService, private configService: ConfigService) { }
 
     async register(userRegister: userRegisterDto) {
         const email = userRegister.email;
@@ -29,7 +30,7 @@ export class UserService {
         if (!validatePassword) {
             throw new UnauthorizedException('Password is incorrect');
         }
-        const secretKey = 'Secret_Key_Is_Used_To_Create_Token';
+        const secretKey = this.configService.get<string>('secretKey');
         const payload = { id: user.id, userName: user.userName, role: user.role, email: user.email };
         return { token: this.authService.generateToken(payload, secretKey) };
     }

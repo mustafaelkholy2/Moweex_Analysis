@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Equal, FindOptionsWhere, LessThanOrEqual, Like, MoreThanOrEqual, Repository } from 'typeorm';
+import { Equal, LessThanOrEqual, Like, Repository } from 'typeorm';
 import { AddProduct } from './dto/add.dto';
 import { ClickhouseService } from './clickhouse.service';
 
@@ -22,7 +22,11 @@ export class ProductService {
     }
 
     async updateProduct(productName: string, attr: Partial<Product>) {
+        productName = productName.charAt(0).toUpperCase() + productName.slice(1).toLowerCase()
         const product = await this.repo.findOne({ where: { productName } });
+        if (attr.productName) {
+            attr.productName = attr.productName.charAt(0).toUpperCase() + attr.productName.slice(1).toLowerCase()
+        }
 
         if (!product) {
             throw new NotFoundException(`Product with Name ${productName} not found`);
