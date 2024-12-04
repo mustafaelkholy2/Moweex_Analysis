@@ -7,10 +7,11 @@ import { Product } from './entities/product.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { ClickhouseService } from './clickhouse.service';
+import { ProductRepository } from './repository/product.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Product]), RolesModule, AuthModule],
   controllers: [ProductController],
-  providers: [ProductService, ClickhouseService]
+  providers: [ProductService, ClickhouseService, ProductRepository]
 })
 export class ProductModule { }

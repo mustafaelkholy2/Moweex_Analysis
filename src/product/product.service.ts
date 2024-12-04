@@ -4,26 +4,24 @@ import { Product } from './entities/product.entity';
 import { Equal, LessThanOrEqual, Like, Repository } from 'typeorm';
 import { AddProduct } from './dto/add.dto';
 import { ClickhouseService } from './clickhouse.service';
+import { ProductRepository } from './repository/product.repository';
 
 @Injectable()
 export class ProductService {
-    constructor(@InjectRepository(Product) private repo: Repository<Product>, private clickhouseService: ClickhouseService) { }
+    constructor(private productRepository: ProductRepository, private clickhouseService: ClickhouseService,) { }
 
     async addProduct(addProduct: AddProduct) {
         addProduct.productName = addProduct.productName.charAt(0).toUpperCase() + addProduct.productName.slice(1).toLowerCase()
-        const product = await this.repo.findOne({ where: { productName: addProduct.productName } });
-
+        const product = await this.productRepository.findOne(addProduct.productName)
         if (product) {
             throw new NotFoundException('Product already added');
         }
-
-        const newProduct = this.repo.create(addProduct);
-        return await this.repo.save(newProduct);
+        return this.productRepository.create(addProduct)
     }
 
     async updateProduct(productName: string, attr: Partial<Product>) {
         productName = productName.charAt(0).toUpperCase() + productName.slice(1).toLowerCase()
-        const product = await this.repo.findOne({ where: { productName } });
+        const product = await this.productRepository.findOne(productName)
         if (attr.productName) {
             attr.productName = attr.productName.charAt(0).toUpperCase() + attr.productName.slice(1).toLowerCase()
         }
@@ -32,18 +30,17 @@ export class ProductService {
             throw new NotFoundException(`Product with Name ${productName} not found`);
         }
 
-        Object.assign(product, { ...attr })
-        return await this.repo.save(product)
+        return this.productRepository.update(product, attr)
     }
 
     async deleteProduct(productName: string) {
-        const product = await this.repo.findOne({ where: { productName } });
+        const product = await this.productRepository.findOne(productName)
 
         if (!product) {
             throw new NotFoundException(`Product with Name ${productName} not found`);
         }
 
-        return await this.repo.remove(product)
+        return this.productRepository.delete(product)
     }
 
     async search(queries: Record<string, string>, user: any) {
@@ -63,9 +60,7 @@ export class ProductService {
             }
         });
 
-        const products = await this.repo.find({
-            where: conditions,
-        });
+        const products = await this.productRepository.findAll(conditions)
 
         if (products.length === 0) {
             throw new NotFoundException('No products found matching your criteria');
