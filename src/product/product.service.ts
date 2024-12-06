@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Equal, LessThanOrEqual, Like, Repository } from 'typeorm';
 import { AddProduct } from './dto/add.dto';
-import { ClickhouseService } from './clickhouse.service';
+import { ClickhouseService } from '../analytics/clickhouseanalytics.service';
 import { ProductRepository } from './repository/product.repository';
 
 @Injectable()
@@ -45,8 +44,6 @@ export class ProductService {
 
     async search(queries: Record<string, string>, user: any) {
         const conditions: Record<string, any> = {};
-        const now = new Date();
-        const search_date = now.toISOString().slice(0, 19).replace('T', ' '); // "yyyy-MM-dd HH:mm:ss"
 
 
         Object.entries(queries).forEach(([key, value]) => {
@@ -66,14 +63,7 @@ export class ProductService {
             throw new NotFoundException('No products found matching your criteria');
         }
 
-        const searchLogs = products.map(product => ({
-            product_name: product.productName,
-            user_id: user.id,
-            user_email: user.email,
-            search_date: search_date,
-        }));
-
-        await this.clickhouseService.insertSearchLog(searchLogs);
+        await this.clickhouseService.insertSearchLog(products, user);
 
         return products;
     }

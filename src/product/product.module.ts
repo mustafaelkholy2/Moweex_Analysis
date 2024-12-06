@@ -6,7 +6,7 @@ import { User } from 'src/user/entities/user.entity';
 import { Product } from './entities/product.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
-import { ClickhouseService } from './clickhouse.service';
+import { ClickhouseService } from '../analytics/clickhouseanalytics.service';
 import { ProductRepository } from './repository/product.repository';
 
 @Module({

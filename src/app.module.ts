@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ProductModule } from './product/product.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AnalyticsModule } from './analytics/analytics.module';
 import appConfig from './config/server.config'
 import databaseConfig from './config/database.config'
 
@@ -23,7 +24,8 @@ import databaseConfig from './config/database.config'
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
         configService.get('database')
-    })
+    }),
+    AnalyticsModule
   ],
   controllers: [AppController],
   providers: [AppService],
