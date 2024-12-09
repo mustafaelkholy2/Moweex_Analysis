@@ -2,12 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './entities/product.entity';
 import { Equal, LessThanOrEqual, Like, Repository } from 'typeorm';
 import { AddProduct } from './dto/add.dto';
-import { ClickhouseService } from '../analytics/clickhouseanalytics.service';
 import { ProductRepository } from './repository/product.repository';
+import { AnalyticsService } from 'src/analytics/analytics.service';
 
 @Injectable()
 export class ProductService {
-    constructor(private productRepository: ProductRepository, private clickhouseService: ClickhouseService,) { }
+    constructor(private productRepository: ProductRepository, private analyticsService: AnalyticsService,) { }
 
     async addProduct(addProduct: AddProduct) {
         addProduct.productName = addProduct.productName.charAt(0).toUpperCase() + addProduct.productName.slice(1).toLowerCase()
@@ -63,7 +63,7 @@ export class ProductService {
             throw new NotFoundException('No products found matching your criteria');
         }
 
-        await this.clickhouseService.insertSearchLog(products, user);
+        await this.analyticsService.insertSearchLog(products, user);
 
         return products;
     }

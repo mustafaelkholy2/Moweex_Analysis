@@ -8,9 +8,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { ClickhouseService } from '../analytics/clickhouseanalytics.service';
 import { ProductRepository } from './repository/product.repository';
+import { AnalyticsModule } from 'src/analytics/analytics.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Product]), RolesModule, AuthModule],
+  imports: [TypeOrmModule.forFeature([User, Product]), RolesModule, AuthModule, AnalyticsModule],
   controllers: [ProductController],
   providers: [ProductService, ClickhouseService, ProductRepository]
 })
