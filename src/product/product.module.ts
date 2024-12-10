@@ -5,14 +5,13 @@ import { RolesModule } from 'src/roles/roles.module';
 import { User } from 'src/user/entities/user.entity';
 import { Product } from './entities/product.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from 'src/auth/auth.module';
-import { ClickhouseService } from '../analytics/clickhouseanalytics.service';
 import { ProductRepository } from './repository/product.repository';
 import { AnalyticsModule } from 'src/analytics/analytics.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Product]), RolesModule, AuthModule, AnalyticsModule],
+  imports: [TypeOrmModule.forFeature([User, Product]), RolesModule, AnalyticsModule, MailModule],
   controllers: [ProductController],
-  providers: [ProductService, ClickhouseService, ProductRepository]
+  providers: [ProductService, ProductRepository]
 })
 export class ProductModule { }

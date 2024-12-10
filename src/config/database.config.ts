@@ -10,7 +10,9 @@ export default () => ({
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
         entities: [User, Product],
-        synchronize: true,
+        synchronize: false,
+        migrations: [__dirname + '/../migrations-dir/*.ts'],
+        migrationsRun: true,
         logging: true,
     }
 })

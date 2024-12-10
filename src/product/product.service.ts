@@ -1,13 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './entities/product.entity';
-import { Equal, LessThanOrEqual, Like, Repository } from 'typeorm';
+import { Equal, LessThanOrEqual, Like } from 'typeorm';
 import { AddProduct } from './dto/add.dto';
 import { ProductRepository } from './repository/product.repository';
 import { AnalyticsService } from 'src/analytics/analytics.service';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class ProductService {
-    constructor(private productRepository: ProductRepository, private analyticsService: AnalyticsService,) { }
+    constructor(private productRepository: ProductRepository, private analyticsService: AnalyticsService,
+        private mailService: MailService
+    ) { }
 
     async addProduct(addProduct: AddProduct) {
         addProduct.productName = addProduct.productName.charAt(0).toUpperCase() + addProduct.productName.slice(1).toLowerCase()
@@ -15,6 +18,9 @@ export class ProductService {
         if (product) {
             throw new NotFoundException('Product already added');
         }
+        const event = 'add'
+        await this.mailService.setEmailType(event)
+        await this.mailService.sendMail('user@gmail.com', 'Add new Product', `We added new product ${addProduct.productName}`)
         return this.productRepository.create(addProduct)
     }
 
@@ -28,6 +34,9 @@ export class ProductService {
         if (!product) {
             throw new NotFoundException(`Product with Name ${productName} not found`);
         }
+        const event = 'update'
+        await this.mailService.setEmailType(event)
+        await this.mailService.sendMail('user@gmail.com', 'Update Product', `We updated product ${productName}`)
 
         return this.productRepository.update(product, attr)
     }
@@ -44,7 +53,6 @@ export class ProductService {
 
     async search(queries: Record<string, string>, user: any) {
         const conditions: Record<string, any> = {};
-
 
         Object.entries(queries).forEach(([key, value]) => {
             if (key === 'price') {
