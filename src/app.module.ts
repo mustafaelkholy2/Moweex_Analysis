@@ -8,6 +8,7 @@ import { ProductModule } from './product/product.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { MailModule } from './mail/mail.module';
+import { OrderModule } from './order/order.module';
 import appConfig from './config/server.config';
 import databaseConfig from './config/database.config'
 
@@ -28,6 +29,7 @@ import databaseConfig from './config/database.config'
     }),
     AnalyticsModule,
     MailModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,6 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString, MaxLength, MinLength } from "class-validator";
-import { ProductRoles } from "../role/role.enum";
-import { ProductCategories } from "../role/category.enum";
+import { ProductRoles } from "../enum/role.enum";
+import { ProductCategories } from "../enum/category.enum";
 
 export class AddProduct {
     @IsString()

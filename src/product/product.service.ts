@@ -19,8 +19,8 @@ export class ProductService {
             throw new NotFoundException('Product already added');
         }
         const event = 'add'
-        await this.mailService.setEmailType(event)
-        await this.mailService.sendMail('user@gmail.com', 'Add new Product', `We added new product ${addProduct.productName}`)
+        // await this.mailService.setEmailType(event)
+        // await this.mailService.sendMail('user@gmail.com', 'Add new Product', `We added new product ${addProduct.productName}`)
         return this.productRepository.create(addProduct)
     }
 
@@ -34,9 +34,9 @@ export class ProductService {
         if (!product) {
             throw new NotFoundException(`Product with Name ${productName} not found`);
         }
-        const event = 'update'
-        await this.mailService.setEmailType(event)
-        await this.mailService.sendMail('user@gmail.com', 'Update Product', `We updated product ${productName}`)
+        // const event = 'update'
+        // await this.mailService.setEmailType(event)
+        // await this.mailService.sendMail('user@gmail.com', 'Update Product', `We updated product ${productName}`)
 
         return this.productRepository.update(product, attr)
     }
@@ -59,6 +59,8 @@ export class ProductService {
                 conditions[key] = LessThanOrEqual(parseFloat(value));
             } else if (key === 'role') {
                 conditions[key] = Equal(value as 'available' | 'unavailable');
+            } else if (key === 'category') {
+                conditions[key] = Equal(value as 'televisions' | 'phones' | 'cameras' | 'laptops')
             } else {
                 value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
                 conditions[key] = Like(`%${value}%`);

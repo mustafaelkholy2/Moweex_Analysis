@@ -1,3 +1,4 @@
+import { Order } from "src/order/entities/order.entity";
 import { Product } from "src/product/entities/product.entity";
 import { User } from "src/user/entities/user.entity";
 export default () => ({
@@ -8,7 +9,7 @@ export default () => ({
         username: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
-        entities: [User, Product],
+        entities: [User, Product, Order],
         synchronize: true,
         logging: true
     }
