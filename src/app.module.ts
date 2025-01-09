@@ -8,7 +8,7 @@ import { ProductModule } from './product/product.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { MailModule } from './mail/mail.module';
-import appConfig from './config/server.config'
+import appConfig from './config/server.config';
 import databaseConfig from './config/database.config'
 
 @Module({
@@ -27,7 +27,7 @@ import databaseConfig from './config/database.config'
         configService.get('database')
     }),
     AnalyticsModule,
-    MailModule
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

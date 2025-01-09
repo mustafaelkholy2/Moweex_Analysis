@@ -1,6 +1,5 @@
 import { Product } from "src/product/entities/product.entity";
 import { User } from "src/user/entities/user.entity";
-
 export default () => ({
     database: {
         type: 'postgres',
@@ -10,9 +9,7 @@ export default () => ({
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
         entities: [User, Product],
-        synchronize: false,
-        migrations: [__dirname + '/../migrations-dir/*.ts'],
-        migrationsRun: true,
-        logging: true,
+        synchronize: true,
+        logging: true
     }
 })
