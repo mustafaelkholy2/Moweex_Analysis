@@ -16,4 +16,7 @@ export class Product {
 
     @Column()
     description: string
+
+    @Column({ type: 'enum', enum: ['televisions', 'phones', 'cameras', 'laptops'] })
+    category: 'televisions' | 'phones' | 'cameras' | 'laptops'
 }

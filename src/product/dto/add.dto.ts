@@ -1,5 +1,6 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString, MaxLength, MinLength } from "class-validator";
 import { ProductRoles } from "../role/role.enum";
+import { ProductCategories } from "../role/category.enum";
 
 export class AddProduct {
     @IsString()
@@ -19,4 +20,8 @@ export class AddProduct {
     @MaxLength(50, { message: 'description must have at most 10 characters.' })
     @IsNotEmpty()
     description: string
+
+    @IsEnum(ProductCategories)
+    @IsNotEmpty()
+    category: ProductCategories
 }
