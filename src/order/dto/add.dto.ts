@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { IsDate, IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, MaxLength, Min, MinLength } from "class-validator";
 import { OrderStatus } from "../enum/status.enum";
 
 export class AddOrder {
@@ -17,4 +17,13 @@ export class AddOrder {
     @IsString()
     @IsNotEmpty()
     products: string[]
+
+    @IsNumber()
+    @IsOptional()
+    @Min(0)
+    @Max(5)
+    orderRate: number
+
+    @IsDate()
+    orderDate: Date
 }

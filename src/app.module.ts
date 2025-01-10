@@ -9,8 +9,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { MailModule } from './mail/mail.module';
 import { OrderModule } from './order/order.module';
+import { CartModule } from './cart/cart.module';
 import appConfig from './config/server.config';
 import databaseConfig from './config/database.config'
+import cachingConfig from './config/redis.config'
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -19,7 +22,7 @@ import databaseConfig from './config/database.config'
     ProductModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig]
+      load: [appConfig, databaseConfig, cachingConfig]
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -30,6 +33,7 @@ import databaseConfig from './config/database.config'
     AnalyticsModule,
     MailModule,
     OrderModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService],

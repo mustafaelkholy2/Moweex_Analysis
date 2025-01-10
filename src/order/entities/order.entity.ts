@@ -14,6 +14,12 @@ export class Order {
     @Column("float", { nullable: true })
     price: number
 
-    @Column({ type: 'enum', enum: ['in progress', 'canceled', 'shipped', 'completed'] })
-    status: 'in progress' | 'canceled' | 'shipped' | 'completed'
+    @Column({ type: 'enum', enum: ['canceled', 'shipped', 'completed'] })
+    status: 'canceled' | 'shipped' | 'completed'
+
+    @Column({ type: 'date' })
+    orderDate: Date
+
+    @Column()
+    orderRate: number
 }
