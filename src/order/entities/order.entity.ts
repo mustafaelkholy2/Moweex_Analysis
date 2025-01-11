@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class Order {
     @PrimaryGeneratedColumn()
-    id: number
+    id?: number
 
     @Column({ type: 'varchar', length: 50 })
     client_Mail: string
@@ -14,12 +14,12 @@ export class Order {
     @Column("float", { nullable: true })
     price: number
 
-    @Column({ type: 'enum', enum: ['canceled', 'shipped', 'completed'] })
-    status: 'canceled' | 'shipped' | 'completed'
+    @Column({ type: 'enum', enum: ['in progress', 'canceled', 'shipped', 'completed'] })
+    status: 'in progress' | 'canceled' | 'shipped' | 'completed'
 
     @Column({ type: 'date' })
-    orderDate: Date
+    orderDate: string
 
-    @Column()
-    orderRate: number
+    @Column({ type: 'float', nullable: true })
+    orderRate?: number;
 }

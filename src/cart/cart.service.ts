@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+import { OrderStatus } from 'src/order/enum/status.enum';
+import { OrderService } from 'src/order/order.service';
 
 @Injectable()
 export class CartService {
     private redisClient: Redis;
-    constructor(private configService: ConfigService) {
+    constructor(private configService: ConfigService, @Inject(forwardRef(() => OrderService)) private orderService: OrderService) {
         this.redisClient = new Redis({
             host: this.configService.get('caching.host'),
             port: this.configService.get('caching.port'),
@@ -30,7 +32,7 @@ export class CartService {
     async getCart(userEmail: string): Promise<any> {
         const cartKey = `${this.configService.get<string>('cartPrefix')}:${userEmail}`;
 
-        return await this.redisClient.hgetall(cartKey);
+        return this.redisClient.hgetall(cartKey);
     }
 
     async removeFromCart(userEmail: string, productName: string): Promise<void> {
@@ -46,9 +48,8 @@ export class CartService {
         }
     }
 
-    async clearCart(userEmail: string): Promise<void> {
+    async clearCart(userEmail: string) {
         const cartKey = `${this.configService.get<string>('cartPrefix')}:${userEmail}`;
-
-        await this.redisClient.del(cartKey);
+        await this.redisClient.del(cartKey)
     }
 }
