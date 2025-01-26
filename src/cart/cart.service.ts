@@ -1,7 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
-import { OrderStatus } from 'src/order/enum/status.enum';
 import { OrderService } from 'src/order/order.service';
 
 @Injectable()

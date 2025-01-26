@@ -18,5 +18,4 @@ export class SesmailService implements MailSender {
         console.log('update product mail')
         return this.ses.sendEmail(mailData).promise();
     }
-
 }
